@@ -5,6 +5,15 @@
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Migrations\20190701082533_AddingEnum.cs" />
+    <Compile Remove="Migrations\20190701082533_AddingEnum.Designer.cs" />
+    <Compile Remove="Migrations\20190701082836_AddingEnum.cs" />
+    <Compile Remove="Migrations\20190701082836_AddingEnum.Designer.cs" />
+    <Compile Remove="Migrations\20190701083650_AddingEnum.cs" />
+    <Compile Remove="Migrations\20190701083650_AddingEnum.Designer.cs" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
