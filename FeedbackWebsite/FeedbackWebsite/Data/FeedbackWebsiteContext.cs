@@ -14,8 +14,19 @@ namespace FeedbackWebsite.Models
         {
         }
 
-        public DbSet<FeedbackWebsite.Models.EventInfoModel> EventInfoModel { get; set; }
+        public DbSet<EventInfoModel> EventInfoModel { get; set; }
 
-        public DbSet<FeedbackWebsite.Models.QuestionsInfoModel> QuestionsInfoModel { get; set; }
+        public DbSet<AnswerEnum> AnswerEnum { get; set; }
+
+        public DbSet<AnswerText> AnswerText { get; set; }
+
+        public DbSet<AnswersInfoModel> AnswersInfoModel { get; set; }
+
+        public DbSet<QuestionTextModel> QuestionTextModel { get; set; }
+
+        public FeedbackWebsiteContext()
+        {
+            Database.EnsureCreated();
+        }
     }
 }
