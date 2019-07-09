@@ -1,0 +1,16 @@
+﻿@using FeedbackWebsite.Utils
+@using FeedbackWebsite.ViewModels
+@model FeedbackWebsite.ViewModels.QuestionsAnswersEnum
+
+
+    <div class="form-group">  <label asp-for="@Model.EnumAnswer" class="control-label">@Model.QuestionText</label>
+        <div class="input-control select size3">
+            <select asp-for="@Model.EnumAnswer" name="items[@Model.QuestionId]" asp-items="Html.GetEnumSelectList<Answer>()">
+                <option selected="selected" disabled="disabled"></option>
+            </select>
+        </div>
+        <input type="hidden" asp-for="@Model.QuestionType" name="questionType" value="@Model.QuestionType" />
+        <input type="hidden" asp-for="@Model.QuestionId" name="questionId" value="@Model.QuestionId" />
+        <span asp-validation-for="@Model.EnumAnswer" class="text-danger"></span>
+    </div>
+       

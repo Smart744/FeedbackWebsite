@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FeedbackWebsite.Models.QuestionsInfoModel>
+﻿@model IEnumerable<FeedbackWebsite.Models.AnswersInfoModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -6,12 +6,12 @@
 
 <h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+@*<p>
+    <a asp-action="AddOrEdit">Create New</a>
+</p>*@
 <table class="table">
     <thead>
-        <tr>
+        @*<tr>
             <th>
                 @Html.DisplayNameFor(model => model.Question1)
             </th>
@@ -43,12 +43,12 @@
                 @Html.DisplayNameFor(model => model.Comment)
             </th>
             <th></th>
-        </tr>
+        </tr>*@
     </thead>
     <tbody>
 @foreach (var item in Model) {
-        <tr>
-            <td>
+    <tr>
+        @*<td>
                 @Html.DisplayFor(modelItem => item.Question1)
             </td>
             <td>
@@ -77,13 +77,14 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Comment)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+            </td>*@
+        <td>
+            <a asp-action="AddOrEdit" asp-route-id="@item.Id">Edit</a> |
+            @*<a asp-action="Details" asp-route-id="@item.Id">Details</a> |*@
+            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
+            <a asp-controller="Feedback" asp-action="Index" asp-route-id="@item.Id">Back to event info</a>
+        </td>
+    </tr>
 }
     </tbody>
 </table>
