@@ -14,10 +14,10 @@ namespace FeedbackWebsite.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    EmployeeName = table.Column<string>(nullable: true),
-                    Department = table.Column<string>(nullable: true),
-                    Position = table.Column<string>(nullable: true),
-                    EventName = table.Column<string>(nullable: true),
+                    EmployeeName = table.Column<string>(),
+                    Department = table.Column<string>(),
+                    Position = table.Column<string>(),
+                    EventName = table.Column<string>(),
                     EventOrg = table.Column<string>(nullable: true),
                     PresentersName = table.Column<string>(nullable: true),
                     EventLocation = table.Column<string>(nullable: true),

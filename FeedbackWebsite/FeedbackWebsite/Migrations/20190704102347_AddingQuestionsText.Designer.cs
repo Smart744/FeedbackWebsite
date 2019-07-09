@@ -4,14 +4,16 @@ using FeedbackWebsite.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FeedbackWebsite.Migrations
 {
     [DbContext(typeof(FeedbackWebsiteContext))]
-    partial class FeedbackWebsiteContextModelSnapshot : ModelSnapshot
+    [Migration("20190704102347_AddingQuestionsText")]
+    partial class AddingQuestionsText
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -78,9 +80,9 @@ namespace FeedbackWebsite.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("IsEnum");
+                    b.Property<string>("AnswerText");
 
-                    b.Property<string>("QuestionText");
+                    b.Property<bool>("IsEnum");
 
                     b.HasKey("Id");
 
