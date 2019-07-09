@@ -4,7 +4,7 @@
 
 <div class="form-group">
     <label asp-for="@Model.TextAnswer" class="control-label">@Model.QuestionText</label>
-    <input asp-for="@Model.TextAnswer" name="items[@Model.QuestionId]" class="form-control" />
+    <input asp-for="@Model.TextAnswer" name="answers[@Model.QuestionId]" class="form-control" />
     <input type="hidden" asp-for="@Model.QuestionType" name="questionType" value="@Model.QuestionType" />
     <input type="hidden" asp-for="@Model.QuestionId" name="questionId" value="@Model.QuestionId" />
     <span asp-validation-for="@Model.TextAnswer" class="text-danger"></span>

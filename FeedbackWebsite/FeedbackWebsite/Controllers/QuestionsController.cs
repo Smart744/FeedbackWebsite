@@ -70,47 +70,13 @@ namespace FeedbackWebsite.Controllers
             {
                 if (question.IsEnum)
                 {
-                    var questionsAnswersEnum = new QuestionsAnswersEnum
-                    {
-                        QuestionId = question.Id,
-                        QuestionText = question.QuestionText,
-                        QuestionType = question.IsEnum
-                    };
-
-                    var questionId = question.Id;
-
-                    try
-                    {
-                        var answerEnum = (AnswerEnum)answersInfoModel[questionId];
-                        questionsAnswersEnum.EnumAnswer = answerEnum.QuestionEnumAnswer;
-                    }
-                    catch (KeyNotFoundException)
-                    {
-                       // throw;
-                    }
+                    var questionsAnswersEnum = CreateQuestionsAnswersEnum(question, answersInfoModel);
 
                     questionsAnswers.Add(questionsAnswersEnum);
                 }
                 else
                 {
-                    var questionsAnswersText = new QuestionsAnswersText
-                    {
-                        QuestionId = question.Id,
-                        QuestionText = question.QuestionText,
-                        QuestionType = question.IsEnum
-                    };
-
-                    var questionId = question.Id;
-
-                    try
-                    {
-                        var answerText = (AnswerText)answersInfoModel[questionId];
-                        questionsAnswersText.TextAnswer = answerText.AnswerTextAnswer;
-                    }
-                    catch (KeyNotFoundException)
-                    {
-                        //throw;
-                    }
+                    var questionsAnswersText = CreateQuestionsAnswersText(question, answersInfoModel);
 
                     questionsAnswers.Add(questionsAnswersText);
                 }
@@ -130,55 +96,49 @@ namespace FeedbackWebsite.Controllers
             return View(ivm);
         }
 
+
         // POST: Feedback/CreateOrEdit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddOrEdit(int? personId, Dictionary<int, string> items)
+        public async Task<IActionResult> AddOrEdit(int? personId, Dictionary<int, string> answers)
         {
-
-            if (personId != answersInfoModel.PersonId)
+            if (personId == null)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (_context.EventInfoModel.Any(e => e.Id == personId) == false)
             {
-                try
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid) return BadRequest();
+
+            var questionsTextModels = await _context.QuestionTextModel.ToListAsync();
+
+            var answerEnums = _context.AnswerEnum.Where(model => model.PersonId == personId).ToDictionary(model => model.QuestionId);
+            var answerTexts = _context.AnswerText.Where(model => model.PersonId == personId).ToDictionary(model => model.QuestionId);
+
+            foreach (QuestionTextModel question in questionsTextModels)
+            {
+                string answer = answers[question.Id];
+
+
+                if (question.IsEnum)
                 {
-                    if (!AnswersInfoModelExists(answersInfoModel.Id))
-                    {
-                        _context.Add(answersInfoModel);
-                        await _context.SaveChangesAsync();
-
-                        // return RedirectToAction("Index", "Feedback");
-                        // return RedirectToAction(nameof(Index));
-                    }
-                    else
-                    {
-                        _context.Update(answersInfoModel);
-                        await _context.SaveChangesAsync();
-
-                        // return RedirectToAction("Index", "Feedback");
-                        //return RedirectToAction(nameof(Index));
-                    }
+                    await AddOrUpdateEnumAnswer(personId.Value, answerEnums, question, answer);
                 }
-                catch (DbUpdateConcurrencyException)
+                else
                 {
-                    if (!AnswersInfoModelExists(answersInfoModel.Id))
-                    {
-                        return NotFound();
-                        //return RedirectToAction(nameof(Index));
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    await AddOrUpdateTextAnswer(personId.Value, answerTexts, question, answer);
                 }
             }
-            return View(answersInfoModel);
+
+            return RedirectToAction("Index", "Feedback");
         }
+
 
         // GET: Feedback/Delete/5
         public async Task<IActionResult> Delete(int? personId)
@@ -208,6 +168,123 @@ namespace FeedbackWebsite.Controllers
         private bool AnswersInfoModelExists(int personId)
         {
             return _context.AnswersInfoModel.Any(e => e.PersonId == personId);
+        }
+
+
+        private static QuestionsAnswersEnum CreateQuestionsAnswersEnum(QuestionTextModel question, Dictionary<int, AnswersInfoModel> answersInfoModel)
+        {
+            var questionsAnswersEnum = new QuestionsAnswersEnum
+            {
+                QuestionId = question.Id,
+                QuestionText = question.QuestionText,
+                QuestionType = question.IsEnum
+            };
+
+            var questionId = question.Id;
+
+            if (answersInfoModel.ContainsKey(questionId))
+            {
+                var answerEnum = (AnswerEnum)answersInfoModel[questionId];
+                questionsAnswersEnum.EnumAnswer = answerEnum.QuestionEnumAnswer;
+            }
+
+            return questionsAnswersEnum;
+        }
+
+
+        private static QuestionsAnswersText CreateQuestionsAnswersText(QuestionTextModel question, Dictionary<int, AnswersInfoModel> answersInfoModel)
+        {
+            var questionsAnswersText = new QuestionsAnswersText
+            {
+                QuestionId = question.Id,
+                QuestionText = question.QuestionText,
+                QuestionType = question.IsEnum
+            };
+
+            var questionId = question.Id;
+
+            if (answersInfoModel.ContainsKey(questionId))
+            {
+                var answerText = (AnswerText)answersInfoModel[questionId];
+                questionsAnswersText.TextAnswer = answerText.AnswerTextAnswer;
+            }
+
+            return questionsAnswersText;
+        }
+
+
+        private async Task AddOrUpdateEnumAnswer(int personId, Dictionary<int, AnswerEnum> answerEnums, QuestionTextModel question, string answer)
+        {
+            try
+            {
+                if (!answerEnums.ContainsKey(question.Id))
+                {
+                    var answerEnum = new AnswerEnum
+                    {
+                        QuestionId = question.Id,
+                        PersonId = personId,
+                        QuestionEnumAnswer = Enum.Parse<Answer>(answer)
+                    };
+
+                    _context.Add(answerEnum);
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    var answerEnum = answerEnums[question.Id];
+                    answerEnum.QuestionEnumAnswer = Enum.Parse<Answer>(answer);
+                    _context.Update(answerEnum);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                //if (!AnswersInfoModelExists(answerEnum.Id))
+                //{
+                //    return NotFound();
+                //}
+                //else
+                //{
+                throw;
+                //}
+            }
+        }
+
+        private async Task AddOrUpdateTextAnswer(int personId, Dictionary<int, AnswerText> answerTexts, QuestionTextModel question, string answer)
+        {
+            try
+            {
+                if (!answerTexts.ContainsKey(question.Id))
+                {
+                    var answerText = new AnswerText
+                    {
+                        QuestionId = question.Id,
+                        PersonId = personId,
+                        AnswerTextAnswer = answer
+                    };
+
+                    _context.Add(answerText);
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    var answerText = answerTexts[question.Id];
+                    answerText.AnswerTextAnswer = answer;
+                    _context.Update(answerText);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                //if (!AnswersInfoModelExists(answerText.Id))
+                //{
+                //    return NotFound();
+                //}
+                //else
+                //{
+                throw;
+                //}
+            }
         }
     }
 }
