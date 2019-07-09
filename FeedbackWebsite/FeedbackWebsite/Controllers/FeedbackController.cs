@@ -59,7 +59,8 @@ namespace FeedbackWebsite.Controllers
             {
                 _context.Add(eventInfoModel);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
+                return RedirectToAction("AddOrEdit", "Questions", new { personId=eventInfoModel.Id});
             }
             return View(eventInfoModel);
         }
@@ -110,7 +111,8 @@ namespace FeedbackWebsite.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
+                return RedirectToAction("AddOrEdit", "Questions", new { eventInfoModel.Id });
             }
             return View(eventInfoModel);
         }

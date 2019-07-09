@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FeedbackWebsite.Models;
+using FeedbackWebsite.ViewModels;
 
 
 namespace FeedbackWebsite.Controllers
@@ -21,75 +23,122 @@ namespace FeedbackWebsite.Controllers
         }
 
         // GET: Feedback
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.QuestionsInfoModel.ToListAsync());
-        }
+        //public async Task<IActionResult> Index()
+        //{
+        //    return View(new List(new ));
+        //}
 
-        // GET: Feedback/Details/5
-        public async Task<IActionResult> Details(int? id)
+        //// GET: Feedback/Details/5
+        //public async Task<IActionResult> Details(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    if (!AnswersInfoModelExists(id.Value))
+        //    {
+        //        return NotFound();
+        //    }
+
+
+        //    return View(new List(new ));
+        //}
+
+        //GET: Feedback/CreateOrEdit/5
+        public async Task<IActionResult> AddOrEdit(int? personId)
         {
-            if (id == null)
+            if (personId == null)
             {
                 return NotFound();
             }
 
-            var questionsInfoModel = await _context.QuestionsInfoModel
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (questionsInfoModel == null)
+            ViewData["Title"] = "Edit";
+
+            var questionsTextModels = await _context.QuestionTextModel.ToListAsync();
+
+            var answersInfoModel = _context.AnswersInfoModel.Where(model => model.PersonId == personId).ToDictionary(model => model.QuestionId);
+
+            if (answersInfoModel.Count == 0)
             {
-                return NotFound();
+                ViewData["Title"] = "Add";
             }
 
-            return View(questionsInfoModel);
+            List<QuestionsAnswersModel> questionsAnswers = new List<QuestionsAnswersModel>();
+
+            foreach (var question in questionsTextModels)
+            {
+                if (question.IsEnum)
+                {
+                    var questionsAnswersEnum = new QuestionsAnswersEnum
+                    {
+                        QuestionId = question.Id,
+                        QuestionText = question.QuestionText,
+                        QuestionType = question.IsEnum
+                    };
+
+                    var questionId = question.Id;
+
+                    try
+                    {
+                        var answerEnum = (AnswerEnum)answersInfoModel[questionId];
+                        questionsAnswersEnum.EnumAnswer = answerEnum.QuestionEnumAnswer;
+                    }
+                    catch (KeyNotFoundException)
+                    {
+                       // throw;
+                    }
+
+                    questionsAnswers.Add(questionsAnswersEnum);
+                }
+                else
+                {
+                    var questionsAnswersText = new QuestionsAnswersText
+                    {
+                        QuestionId = question.Id,
+                        QuestionText = question.QuestionText,
+                        QuestionType = question.IsEnum
+                    };
+
+                    var questionId = question.Id;
+
+                    try
+                    {
+                        var answerText = (AnswerText)answersInfoModel[questionId];
+                        questionsAnswersText.TextAnswer = answerText.AnswerTextAnswer;
+                    }
+                    catch (KeyNotFoundException)
+                    {
+                        //throw;
+                    }
+
+                    questionsAnswers.Add(questionsAnswersText);
+                }
+            }
+
+            //if (answersInfoModel == null)
+            //{
+            //    //return NotFound();
+            //    answersInfoModel = await _context.AnswersInfoModel
+            //        .FirstOrDefaultAsync(m => m.Id == id);
+
+            //    ViewData["Title"] = "Create";
+            //}
+
+            IndexViewModel ivm = new IndexViewModel {personId = personId.Value, qiestionsAnswers = questionsAnswers};
+
+            return View(ivm);
         }
 
-        // GET: Feedback/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Feedback/Create
+        // POST: Feedback/CreateOrEdit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Question1,Question2,Question3,Question4,Question5,Question6,Question7,Question8,Question9,Comment")] QuestionsInfoModel questionsInfoModel)
+        public async Task<IActionResult> AddOrEdit(int? personId, Dictionary<int, string> items)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(questionsInfoModel);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(questionsInfoModel);
-        }
 
-        // GET: Feedback/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var questionsInfoModel = await _context.QuestionsInfoModel.FindAsync(id);
-            if (questionsInfoModel == null)
-            {
-                return NotFound();
-            }
-            return View(questionsInfoModel);
-        }
-
-        // POST: Feedback/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Question1,Question2,Question3,Question4,Question5,Question6,Question7,Question8,Question9,Comment")] QuestionsInfoModel questionsInfoModel)
-        {
-            if (id != questionsInfoModel.Id)
+            if (personId != answersInfoModel.PersonId)
             {
                 return NotFound();
             }
@@ -98,57 +147,67 @@ namespace FeedbackWebsite.Controllers
             {
                 try
                 {
-                    _context.Update(questionsInfoModel);
-                    await _context.SaveChangesAsync();
+                    if (!AnswersInfoModelExists(answersInfoModel.Id))
+                    {
+                        _context.Add(answersInfoModel);
+                        await _context.SaveChangesAsync();
+
+                        // return RedirectToAction("Index", "Feedback");
+                        // return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        _context.Update(answersInfoModel);
+                        await _context.SaveChangesAsync();
+
+                        // return RedirectToAction("Index", "Feedback");
+                        //return RedirectToAction(nameof(Index));
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!QuestionsInfoModelExists(questionsInfoModel.Id))
+                    if (!AnswersInfoModelExists(answersInfoModel.Id))
                     {
                         return NotFound();
+                        //return RedirectToAction(nameof(Index));
                     }
                     else
                     {
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            return View(questionsInfoModel);
+            return View(answersInfoModel);
         }
 
         // GET: Feedback/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int? personId)
         {
-            if (id == null)
+            if (personId == null)
             {
                 return NotFound();
             }
 
-            var questionsInfoModel = await _context.QuestionsInfoModel
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (questionsInfoModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(questionsInfoModel);
+            return View();
         }
 
-        // POST: Feedback/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var questionsInfoModel = await _context.QuestionsInfoModel.FindAsync(id);
-            _context.QuestionsInfoModel.Remove(questionsInfoModel);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+        //// POST: Feedback/Delete/5
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> DeleteConfirmed(int personId)
+        //{
+        //    var answersInfoModels =  _context.AnswersInfoModel.Where(model => model.PersonId == personId);
+        //    foreach (var answersInfoModel in answersInfoModels)
+        //    {
+        //        _context.AnswersInfoModel.Remove(answersInfoModel);
+        //    }
+        //    await _context.SaveChangesAsync();
+        //    return RedirectToAction(nameof(Index));
+        //}
 
-        private bool QuestionsInfoModelExists(int id)
+        private bool AnswersInfoModelExists(int personId)
         {
-            return _context.QuestionsInfoModel.Any(e => e.Id == id);
+            return _context.AnswersInfoModel.Any(e => e.PersonId == personId);
         }
     }
 }
