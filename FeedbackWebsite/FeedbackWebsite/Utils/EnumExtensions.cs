@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 
@@ -17,13 +18,14 @@ namespace FeedbackWebsite.Utils
 
             var displayName = DisplayNameCache.GetOrAdd(key, x =>
             {
-                var name = (DisplayNameAttribute[]) value
+                //var name = (DisplayNameAttribute[]) value
+                var name = (DisplayAttribute[])value
                     .GetType()
                     .GetTypeInfo()
                     .GetField(value.ToString())
-                    .GetCustomAttributes(typeof(DisplayNameAttribute), false);
+                    .GetCustomAttributes(typeof(DisplayAttribute), false);
 
-                return name.Length > 0 ? name[0].DisplayName : value.ToString();
+                return name.Length > 0 ? name[0].Name : value.ToString();
             });
 
             return displayName;

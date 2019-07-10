@@ -29,21 +29,37 @@ namespace FeedbackWebsite.Controllers
         //}
 
         //// GET: Feedback/Details/5
-        //public async Task<IActionResult> Details(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
+        public async Task<IActionResult> Details(int? personId)
+        {
+            if (personId == null)
+            {
+                return NotFound();
+            }
 
-        //    if (!AnswersInfoModelExists(id.Value))
-        //    {
-        //        return NotFound();
-        //    }
+            var questionsTextModels = await _context.QuestionTextModel.ToListAsync();
 
+            var answersInfoModel = _context.AnswersInfoModel.Where(model => model.PersonId == personId).ToDictionary(model => model.QuestionId);
 
-        //    return View(new List(new ));
-        //}
+            if (answersInfoModel.Count == 0)
+            {
+                return NotFound();
+            }
+
+            List<QuestionsAnswersModel> questionsAnswers = new List<QuestionsAnswersModel>();
+
+            foreach (var question in questionsTextModels)
+            {
+                var questionsAnswersModel = question.IsEnum
+                    ? (QuestionsAnswersModel) CreateQuestionsAnswersEnum(question, answersInfoModel)
+                    : CreateQuestionsAnswersText(question, answersInfoModel);
+
+                questionsAnswers.Add(questionsAnswersModel);
+            }
+
+            IndexViewModel ivm = new IndexViewModel { PersonId = personId.Value, QuestionsAnswers = questionsAnswers };
+
+            return View(ivm);
+        }
 
         //GET: Feedback/CreateOrEdit/5
         public async Task<IActionResult> AddOrEdit(int? personId)
@@ -68,21 +84,14 @@ namespace FeedbackWebsite.Controllers
 
             foreach (var question in questionsTextModels)
             {
-                if (question.IsEnum)
-                {
-                    var questionsAnswersEnum = CreateQuestionsAnswersEnum(question, answersInfoModel);
+                var questionsAnswersModel = question.IsEnum
+                    ? (QuestionsAnswersModel)CreateQuestionsAnswersEnum(question, answersInfoModel)
+                    : CreateQuestionsAnswersText(question, answersInfoModel);
 
-                    questionsAnswers.Add(questionsAnswersEnum);
-                }
-                else
-                {
-                    var questionsAnswersText = CreateQuestionsAnswersText(question, answersInfoModel);
-
-                    questionsAnswers.Add(questionsAnswersText);
-                }
+                questionsAnswers.Add(questionsAnswersModel);
             }
 
-            IndexViewModel ivm = new IndexViewModel {personId = personId.Value, qiestionsAnswers = questionsAnswers};
+            IndexViewModel ivm = new IndexViewModel {PersonId = personId.Value, QuestionsAnswers = questionsAnswers};
 
             return View(ivm);
         }

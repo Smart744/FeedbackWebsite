@@ -9,10 +9,10 @@
 <hr />
 <div class="row">
     <div class="col-md">
-        <form asp-action="AddOrEdit" asp-route-personId="@Model.personId">
+        <form asp-action="AddOrEdit" asp-route-personId="@Model.PersonId">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                @foreach (var qText in Model.qiestionsAnswers)
+                @foreach (var qText in Model.QuestionsAnswers)
                 {
                         @if (qText.QuestionType)
                         {
@@ -33,10 +33,6 @@
         </form>
     </div>
 </div>
-
-@*<div>
-        <a asp-action="Index">Back to List</a>
-    </div>*@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

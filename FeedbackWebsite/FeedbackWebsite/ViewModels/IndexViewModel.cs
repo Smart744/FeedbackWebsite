@@ -9,11 +9,11 @@ namespace FeedbackWebsite.ViewModels
     public class IndexViewModel
     {
         //person id
-        public int personId { get; set; }
+        public int PersonId { get; set; }
         //list
         //   qid  q t a 
 
-        public IEnumerable<QuestionsAnswersModel> qiestionsAnswers { get; set; }
+        public IEnumerable<QuestionsAnswersModel> QuestionsAnswers { get; set; }
         //public IEnumerable<QuestionTextModel> QuestionsText { get; set; }
     }
 }
