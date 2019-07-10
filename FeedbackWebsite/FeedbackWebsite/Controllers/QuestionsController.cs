@@ -82,15 +82,6 @@ namespace FeedbackWebsite.Controllers
                 }
             }
 
-            //if (answersInfoModel == null)
-            //{
-            //    //return NotFound();
-            //    answersInfoModel = await _context.AnswersInfoModel
-            //        .FirstOrDefaultAsync(m => m.Id == id);
-
-            //    ViewData["Title"] = "Create";
-            //}
-
             IndexViewModel ivm = new IndexViewModel {personId = personId.Value, qiestionsAnswers = questionsAnswers};
 
             return View(ivm);
@@ -152,24 +143,20 @@ namespace FeedbackWebsite.Controllers
         }
 
         //// POST: Feedback/Delete/5
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(int personId)
-        //{
-        //    var answersInfoModels =  _context.AnswersInfoModel.Where(model => model.PersonId == personId);
-        //    foreach (var answersInfoModel in answersInfoModels)
-        //    {
-        //        _context.AnswersInfoModel.Remove(answersInfoModel);
-        //    }
-        //    await _context.SaveChangesAsync();
-        //    return RedirectToAction(nameof(Index));
-        //}
-
-        private bool AnswersInfoModelExists(int personId)
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int personId)
         {
-            return _context.AnswersInfoModel.Any(e => e.PersonId == personId);
-        }
+            var answersInfoModels = _context.AnswersInfoModel.Where(model => model.PersonId == personId);
 
+            foreach (var answerInfoModel in answersInfoModels)
+            {
+                _context.AnswersInfoModel.Remove(answerInfoModel);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Feedback");
+        }
 
         private static QuestionsAnswersEnum CreateQuestionsAnswersEnum(QuestionTextModel question, Dictionary<int, AnswersInfoModel> answersInfoModel)
         {

@@ -12,8 +12,8 @@
     <hr />
 
     <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="PersonId" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        @*<a asp-action="Index">Back to List</a>*@
+        <a asp-controller="Feedback" a asp-action="Index">Back to List</a>
     </form>
 </div>

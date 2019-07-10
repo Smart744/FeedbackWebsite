@@ -59,8 +59,7 @@ namespace FeedbackWebsite.Controllers
             {
                 _context.Add(eventInfoModel);
                 await _context.SaveChangesAsync();
-                //return RedirectToAction(nameof(Index));
-                return RedirectToAction("AddOrEdit", "Questions", new { personId=eventInfoModel.Id});
+                return RedirectToAction("AddOrEdit", "Questions", new { personId = eventInfoModel.Id});
             }
             return View(eventInfoModel);
         }
@@ -111,8 +110,7 @@ namespace FeedbackWebsite.Controllers
                         throw;
                     }
                 }
-                //return RedirectToAction(nameof(Index));
-                return RedirectToAction("AddOrEdit", "Questions", new { eventInfoModel.Id });
+                return RedirectToAction("AddOrEdit", "Questions", new {personId = eventInfoModel.Id });
             }
             return View(eventInfoModel);
         }
@@ -143,7 +141,7 @@ namespace FeedbackWebsite.Controllers
             var eventInfoModel = await _context.EventInfoModel.FindAsync(id);
             _context.EventInfoModel.Remove(eventInfoModel);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Delete", "Questions", new { personId = eventInfoModel.Id });
         }
 
         private bool EventInfoModelExists(int id)
