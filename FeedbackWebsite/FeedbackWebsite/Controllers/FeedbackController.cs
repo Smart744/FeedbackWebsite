@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FeedbackWebsite.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FeedbackWebsite.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FeedbackWebsite.Controllers
 {
@@ -19,6 +21,7 @@ namespace FeedbackWebsite.Controllers
         }
 
         // GET: Feedback
+        //[Authorize(Roles = "admin")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.EventInfoModel.ToListAsync());

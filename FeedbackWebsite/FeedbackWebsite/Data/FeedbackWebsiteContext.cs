@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using FeedbackWebsite.Models;
 using Microsoft.EntityFrameworkCore;
-using FeedbackWebsite.Models;
 
-namespace FeedbackWebsite.Models
+namespace FeedbackWebsite.Data
 {
     public class FeedbackWebsiteContext : DbContext
     {
