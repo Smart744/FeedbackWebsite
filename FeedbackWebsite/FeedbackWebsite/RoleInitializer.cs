@@ -11,6 +11,9 @@ namespace FeedbackWebsite
         {
             string adminEmail = "admin@gmail.com";
             string password = "_Aa123456";
+            string adminName = "Admin";
+            string adminDepartment = "Admin";
+            string adminPosition = "Admin";
             if (await roleManager.FindByNameAsync("admin") == null)
             {
                 await roleManager.CreateAsync(new IdentityRole("admin"));
@@ -21,7 +24,7 @@ namespace FeedbackWebsite
             }
             if (await userManager.FindByNameAsync(adminEmail) == null)
             {
-                User admin = new User() { Email = adminEmail, UserName = adminEmail, EmailConfirmed = true};
+                User admin = new User() {EmployeeName = adminName, Department =  adminDepartment, Position = adminPosition, Email = adminEmail, UserName = adminEmail, EmailConfirmed = true};
                 IdentityResult result = await userManager.CreateAsync(admin, password);
                 if (result.Succeeded)
                 {

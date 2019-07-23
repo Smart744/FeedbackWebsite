@@ -42,8 +42,28 @@ namespace CustomIdentityApp.Controllers
             return View(name);
         }
 
-        [HttpPost]
+        //[HttpPost]
+        //public async Task<IActionResult> Delete(string id)
+        //{
+        //    IdentityRole role = await _roleManager.FindByIdAsync(id);
+        //    if (role != null)
+        //    {
+        //        IdentityResult result = await _roleManager.DeleteAsync(role);
+        //    }
+        //    return RedirectToAction("Index");
+        //}
+
+        // GET: Roles/Delete/5
         public async Task<IActionResult> Delete(string id)
+        {
+            IdentityRole role = new IdentityRole(id);
+            return View(role);
+        }
+
+        // POST: Roles/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
             IdentityRole role = await _roleManager.FindByIdAsync(id);
             if (role != null)

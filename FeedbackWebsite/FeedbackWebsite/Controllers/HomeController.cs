@@ -12,13 +12,32 @@ namespace FeedbackWebsite.Controllers
 {
     public class HomeController : Controller
     {
-        [Authorize]
+        [Authorize(Roles = "admin, user")]
         public IActionResult Index()
+        {
+            if (User.IsInRole("admin"))
+            {
+                return RedirectToAction("AdminIndex");
+            }
+            else
+            {
+                return RedirectToAction("UserIndex");
+            }
+        }
+
+        [Authorize(Roles = "user")]
+        public IActionResult UserIndex()
         {
             return View();
         }
 
-        public IActionResult Privacy()
+        [Authorize(Roles = "admin")]
+        public IActionResult AdminIndex()
+        {
+            return View();
+        }
+
+            public IActionResult Privacy()
         {
             return View();
         }

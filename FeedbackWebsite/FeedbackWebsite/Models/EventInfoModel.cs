@@ -9,17 +9,17 @@ namespace FeedbackWebsite.Models
     {
         public int Id { get; set; }
 
-        [Required, RegularExpression(@"[A-Za-z ]*")]
-        [DisplayName("Employee Name")]
-        public string EmployeeName { get; set; }
+        //[Required, RegularExpression(@"[A-Za-z ]*")]
+        //[DisplayName("Employee Name")]
+        //public string EmployeeName { get; set; }
 
-        [Required]
-        [DisplayName("Department")]
-        public string Department { get; set; }
+        //[Required]
+        //[DisplayName("Department")]
+        //public string Department { get; set; }
 
-        [Required]
-        [DisplayName("Position")]
-        public string Position { get; set; }
+        //[Required]
+        //[DisplayName("Position")]
+        //public string Position { get; set; }
 
         [Required]
         [DisplayName("Event Name")]

@@ -30,7 +30,7 @@ namespace FeedbackWebsite.Controllers
         {
             if (ModelState.IsValid)
             {
-                User user = new User() {Email = model.Email, UserName = model.Email};
+                User user = new User() {EmployeeName = model.EmployeeName, Department = model.Department, Position = model.Position, Email = model.Email, UserName = model.Email};
 
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)

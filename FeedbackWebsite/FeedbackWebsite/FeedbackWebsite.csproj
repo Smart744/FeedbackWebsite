@@ -12,6 +12,8 @@
     <Compile Remove="Migrations\20190701082836_AddingEnum.Designer.cs" />
     <Compile Remove="Migrations\20190701083650_AddingEnum.cs" />
     <Compile Remove="Migrations\20190701083650_AddingEnum.Designer.cs" />
+    <Compile Remove="Migrations\Identity\20190719132836_RedactingUser.cs" />
+    <Compile Remove="Migrations\Identity\20190719132836_RedactingUser.Designer.cs" />
   </ItemGroup>
 
 

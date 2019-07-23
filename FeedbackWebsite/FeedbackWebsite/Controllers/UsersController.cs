@@ -27,7 +27,7 @@ namespace FeedbackWebsite.Controllers
         {
             if (ModelState.IsValid)
             {
-                User user = new User { Email = model.Email, UserName = model.Email };
+                User user = new User {EmployeeName = model.EmployeeName, Department = model.Department, Position = model.Position, Email = model.Email, UserName = model.Email, EmailConfirmed = true};
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -51,7 +51,7 @@ namespace FeedbackWebsite.Controllers
             {
                 return NotFound();
             }
-            EditUserViewModel model = new EditUserViewModel { Id = user.Id, Email = user.Email };
+            EditUserViewModel model = new EditUserViewModel { Id = user.Id, Email = user.Email , EmployeeName = user.EmployeeName, Department = user.Department, Position = user.Position};
             return View(model);
         }
 
@@ -65,6 +65,9 @@ namespace FeedbackWebsite.Controllers
                 {
                     user.Email = model.Email;
                     user.UserName = model.Email;
+                    user.EmployeeName = model.EmployeeName;
+                    user.Department = model.Department;
+                    user.Position = model.Position;
 
                     var result = await _userManager.UpdateAsync(user);
                     if (result.Succeeded)
@@ -83,8 +86,28 @@ namespace FeedbackWebsite.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        public async Task<ActionResult> Delete(string id)
+        //[HttpPost]
+        //public async Task<ActionResult> Delete(string id)
+        //{
+        //    User user = await _userManager.FindByIdAsync(id);
+        //    if (user != null)
+        //    {
+        //        IdentityResult result = await _userManager.DeleteAsync(user);
+        //    }
+        //    return RedirectToAction("Index");
+        //}
+
+        // GET: User/Delete/5
+        public async Task<IActionResult> Delete(string id)
+        {
+            User user = new User() {Id = id};
+            return View(user);
+        }
+
+        // POST: User/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
             User user = await _userManager.FindByIdAsync(id);
             if (user != null)
