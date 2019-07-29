@@ -20,6 +20,8 @@ namespace FeedbackWebsite.Data
 
         public DbSet<QuestionTextModel> QuestionTextModel { get; set; }
 
+        public DbSet<UserEventModel> UserEventModels { get; set; }
+
         public FeedbackWebsiteContext()
         {
             Database.EnsureCreated();

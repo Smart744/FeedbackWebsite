@@ -1,4 +1,4 @@
-﻿@*@using FeedbackWebsite.Utils
+﻿@using FeedbackWebsite.Utils
 @using FeedbackWebsite.ViewModels
 @model FeedbackWebsite.ViewModels.IndexViewModel
 
@@ -9,7 +9,7 @@
 <hr />
 <div class="row">
     <div class="col-md">
-        <form asp-action="AddOrEdit" asp-route-personId="@Model.PersonId">
+        <form asp-action="AddOrEdit" asp-route-eventId="@Model.EventId">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                 @foreach (var qText in Model.QuestionsAnswers)
@@ -36,4 +36,4 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}*@
+}

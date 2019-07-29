@@ -19,10 +19,8 @@ namespace FeedbackWebsite.Controllers
             {
                 return RedirectToAction("AdminIndex");
             }
-            else
-            {
-                return RedirectToAction("UserIndex");
-            }
+
+            return RedirectToAction("UserIndex");
         }
 
         [Authorize(Roles = "user")]

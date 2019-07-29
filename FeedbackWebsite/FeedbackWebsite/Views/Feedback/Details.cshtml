@@ -1,4 +1,4 @@
-﻿@*@model FeedbackWebsite.Models.EventInfoModel
+﻿@model FeedbackWebsite.ViewModels.UserEventDetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -12,7 +12,6 @@
     <dl class="row">
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.EmployeeName)
-
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.EmployeeName)
@@ -68,6 +67,9 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>*@
+    <a asp-action="Edit" asp-route-id="@Model.EventId">Edit</a> |
+    <form asp-action="DownloadExcel" asp-route-id="@Model.EventId">
+        <input type="submit" value="Download excel" class="btn btn-secondary" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>

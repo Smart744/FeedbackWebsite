@@ -8,8 +8,8 @@ namespace FeedbackWebsite.ViewModels
 {
     public class IndexViewModel
     {
-        //person id
-        public int PersonId { get; set; }
+        //event id
+        public int EventId { get; set; }
         //list
         //   qid  q t a 
 
