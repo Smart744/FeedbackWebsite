@@ -67,9 +67,10 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.EventId">Edit</a> |
-    <form asp-action="DownloadExcel" asp-route-id="@Model.EventId">
-        <input type="submit" value="Download excel" class="btn btn-secondary" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+    <a class="btn btn-info" asp-action="Edit" asp-route-eventId="@Model.EventId" role="button">Edit</a> |
+    <a class="btn btn-secondary" asp-action="Index" role="button">Back to List</a>
 </div>
+@*<div>
+    <a asp-action="Edit" asp-route-id="@Model.EventId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>*@

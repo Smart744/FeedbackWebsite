@@ -5,20 +5,14 @@ using System.Threading.Tasks;
 using FeedbackWebsite.Data;
 using FeedbackWebsite.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FeedbackWebsite.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Org.BouncyCastle.Utilities.Collections;
-using System.Data;
-using System.Text;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using System.Xml;
 using System.IO;
-using System.Diagnostics;
 
 namespace FeedbackWebsite.Controllers
 {
@@ -298,22 +292,30 @@ namespace FeedbackWebsite.Controllers
         [Authorize(Roles = "admin, user")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int EventId)
+        public async Task<IActionResult> DeleteConfirmed(int eventId)
         {
-            var eventInfoModel = await _context.EventInfoModel.FindAsync(EventId);
+            var eventInfoModel = await _context.EventInfoModel.FindAsync(eventId);
             _context.EventInfoModel.Remove(eventInfoModel);
             await _context.SaveChangesAsync();
 
-            var userEvent = await _context.UserEventModels.FirstOrDefaultAsync(m => m.EventId == EventId);
+            var userEvent = await _context.UserEventModels.FirstOrDefaultAsync(m => m.EventId == eventId);
             _context.UserEventModels.Remove(userEvent);
+
+            var answersInfoModels = _context.AnswersInfoModel.Where(model => model.EventId == eventId);
+
+            foreach (var answerInfoModel in answersInfoModels)
+            {
+                _context.AnswersInfoModel.Remove(answerInfoModel);
+            }
+
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Delete", "Questions", new { eventId = eventInfoModel.Id });
-            //return RedirectToAction("Index");
+            //return RedirectToAction("Delete", "Questions", new { eventId = eventInfoModel.Id });
+            return RedirectToAction("Index");
         }
 
-        [Authorize(Roles = "admin, user")]
-        [HttpPost]
+        [Authorize(Roles = "admin")]
+        [HttpGet]
         public async Task<IActionResult> DownloadExcel(int? id)
         {
             if (id == null)
@@ -358,12 +360,8 @@ namespace FeedbackWebsite.Controllers
 
             string fileName = "Event Feedback Form.xlsx";
             string sourcePath = @"C:\Users\Арсений\source\repos\FeedbackService\FeedbackWebsite\FeedbackWebsite\Excel\Source";
-            //string targetPath = @"C:\Users\Арсений\source\repos\FeedbackService\FeedbackWebsite\FeedbackWebsite\Excel";
 
-            string soutceFile = System.IO.Path.Combine(sourcePath, fileName);
-            //string destFile = System.IO.Path.Combine(targetPath, fileName);
-
-            //CopyExcelFile(soutceFile, destFile);
+            string soutceFile = Path.Combine(sourcePath, fileName);
 
             MemoryStream ms;
             using (var fs = new FileStream(soutceFile, FileMode.Open, FileAccess.Read))
@@ -410,15 +408,15 @@ namespace FeedbackWebsite.Controllers
             ms.Position = 0;
 
 
-            return File(ms, "application/xlsx", fileName);
+            string downloadFileName = $"{userEventDetails.EmployeeName} - {userEventDetails.EventName} - {fileName}";
+            return File(ms, "application/xlsx", downloadFileName);
             //return RedirectToAction("Index");
         }
 
         public static string ReturnStringAnswer(Answer answer)
         {
             string buf = null;
-            int answ = (int) answer;
-            switch (answ)
+            switch ((int)answer)
             {
                 case 0:
                     buf = "(1) Strongly Disagree";
@@ -500,14 +498,15 @@ namespace FeedbackWebsite.Controllers
                 document.WorkbookPart.Workbook.GetFirstChild<Sheets>().
                     Elements<Sheet>().Where(s => s.Name == sheetName);
 
-            if (sheets.Count() == 0)
+            var enumerable = sheets as Sheet[] ?? sheets.ToArray();
+            if (!enumerable.Any())
             {
                 // The specified worksheet does not exist.
 
                 return null;
             }
 
-            string relationshipId = sheets.First().Id.Value;
+            string relationshipId = enumerable.First().Id.Value;
             WorksheetPart worksheetPart = (WorksheetPart)
                 document.WorkbookPart.GetPartById(relationshipId);
             return worksheetPart;
@@ -522,9 +521,9 @@ namespace FeedbackWebsite.Controllers
             if (row == null)
                 return null;
 
-            return row.Elements<Cell>().Where(c => string.Compare
+            return row.Elements<Cell>().Where(c => String.Compare
                                                    (c.CellReference.Value, columnName +
-                                                                           rowIndex, true) == 0).First();
+                                                                           rowIndex, StringComparison.OrdinalIgnoreCase) == 0).First();
         }
 
         private static Row GetRow(Worksheet worksheet, uint rowIndex)

@@ -1,12 +1,15 @@
-﻿@using FeedbackWebsite.Utils
+﻿@using DocumentFormat.OpenXml.Spreadsheet
+@using FeedbackWebsite.Utils
 @using FeedbackWebsite.ViewModels
+@using Text = DocumentFormat.OpenXml.Wordprocessing.Text
 @model FeedbackWebsite.ViewModels.QuestionsAnswersEnum
 
-
-    <div class="form-group">  <label asp-for="@Model.EnumAnswer" class="control-label">@Model.QuestionText</label>
-        <div class="input-control select size3">
-            <select asp-for="@Model.EnumAnswer" name="answers[@Model.QuestionId]" asp-items="Html.GetEnumSelectList<Answer>()">
-                <option selected="selected" disabled="disabled"></option>
+<div class="form-group">
+        <label asp-for="@Model.EnumAnswer" class="control-label">@Model.QuestionText</label>
+        @*<div class="input-control select size3">*@
+        <div>
+            @*<select class="selectpicker" title="Choose one of the following..." asp-for="@Model.EnumAnswer" name="answers[@Model.QuestionId]" asp-items="Html.GetEnumSelectList<Answer>()">*@
+            <select class="custom-select" asp-for="@Model.EnumAnswer" name="answers[@Model.QuestionId]" asp-items="Html.GetEnumSelectList<Answer>()">
             </select>
         </div>
         <input type="hidden" asp-for="@Model.QuestionType" name="questionType" value="@Model.QuestionType" />

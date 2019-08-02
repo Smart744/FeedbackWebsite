@@ -3,11 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using FeedbackWebsite.Models;
 using FeedbackWebsite.ViewModels;
 
-namespace CustomIdentityApp.Controllers
+namespace FeedbackWebsite.Controllers
 {
     public class RolesController : Controller
     {
@@ -42,19 +41,8 @@ namespace CustomIdentityApp.Controllers
             return View(name);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> Delete(string id)
-        //{
-        //    IdentityRole role = await _roleManager.FindByIdAsync(id);
-        //    if (role != null)
-        //    {
-        //        IdentityResult result = await _roleManager.DeleteAsync(role);
-        //    }
-        //    return RedirectToAction("Index");
-        //}
-
         // GET: Roles/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        public ViewResult Delete(string id)
         {
             IdentityRole role = new IdentityRole(id);
             return View(role);
@@ -68,7 +56,7 @@ namespace CustomIdentityApp.Controllers
             IdentityRole role = await _roleManager.FindByIdAsync(id);
             if (role != null)
             {
-                IdentityResult result = await _roleManager.DeleteAsync(role);
+                await _roleManager.DeleteAsync(role);
             }
             return RedirectToAction("Index");
         }
@@ -101,7 +89,6 @@ namespace CustomIdentityApp.Controllers
             if (user != null)
             {
                 var userRoles = await _userManager.GetRolesAsync(user);
-                var allRoles = _roleManager.Roles.ToList();
                 var addedRoles = roles.Except(userRoles);
                 var removedRoles = userRoles.Except(roles);
 

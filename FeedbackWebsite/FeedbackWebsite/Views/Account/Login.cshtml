@@ -1,33 +1,42 @@
 ﻿@model FeedbackWebsite.ViewModels.LoginViewModel
 
 <h2>Login to the application</h2>
-<form method="post" asp-controller="Account" asp-action="Login"
-          asp-route-returnUrl="@Model.ReturnUrl">
-        <div asp-validation-summary="ModelOnly"></div>
-        <div class="form-group">
-            <label asp-for="Email"></label><br />
-            <input asp-for="Email"  id="textField"/>
-            <span asp-validation-for="Email"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="Password"></label><br />
-            <input asp-for="Password" id="passField"/>
-            <span asp-validation-for="Password"></span>
-        </div>
-        <div>
-            @*<label asp-for="RememberMe"></label><br />
-            <input asp-for="RememberMe" />*@
-            <label asp-for="RememberMe"></label> <input asp-for="RememberMe" /><br />
-        </div>
-        <div class="form-group">
-            <input type="submit" value="Sign in" class="btn btn-primary"/>
-        </div>
-        <div class="form-group">
-            No account yet?
-            <a asp-action="Register">Register now</a>
-        </div>
-        <div class="form-group">
-            Forgot your password?
-            <a asp-controller="Account" asp-action="ForgotPassword">Reset Password</a>
-        </div>
-    </form>
+<hr/>
+
+<div class="row">
+    <div class="col-md-4">
+        <form method="post" asp-controller="Account" asp-action="Login"
+              asp-route-returnUrl="@Model.ReturnUrl">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label><br/>
+                <input asp-for="Email" id="textField" class="form-control"/>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label><br/>
+                <input asp-for="Password" id="passField" class="form-control"/>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="custom-control custom-checkbox mb-3">
+                <input type="checkbox" class="custom-control-input" id="customCheck" name="ch1" asp-for="RememberMe"/>
+                <label class="custom-control-label" for="customCheck" asp-for="RememberMe"></label>
+            </div>
+            @*<div>
+                <label asp-for="RememberMe"></label> <input asp-for="RememberMe"/><br/>
+            </div>*@
+            <div class="form-group">
+                <input type="submit" value="Sign in" class="btn btn-primary"/>
+            </div>
+            <div class="form-group">
+                No account yet?
+                <a asp-action="Register">Register now</a>
+            </div>
+            <div class="form-group">
+                Forgot your password?
+                <a asp-controller="Account" asp-action="ForgotPassword">Reset Password</a>
+            </div>
+        </form>
+    </div>
+</div>
+

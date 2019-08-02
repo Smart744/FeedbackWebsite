@@ -5,9 +5,11 @@
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
 </div>
+
 <div>
-    @*<button type="button" class="btn btn-success" asp-controller="Users" asp-action="Index">Edit users</button>*@
-    <a class="btn btn-success" asp-controller="Users" asp-action="Index" role="button">Edit users</a>
-    @*<button type="button" class="btn btn-success" asp-controller="Roles" asp-action="Index">Edit roles</button>*@
-    <a class="btn btn-success" asp-controller="Roles" asp-action="Index" role="button">Edit roles</a>
+    <p><a class="btn btn-outline-success" asp-controller="Feedback" asp-action="Index">See Feedback Info</a></p>
+    <hr/>
+    <p><a class="btn btn-outline-dark " asp-controller="Users" asp-action="Index">Edit Users</a></p>
+    <hr/>
+    <p><a class="btn btn-outline-dark" asp-controller="Roles" asp-action="Index">Edit Roles</a></p>
 </div>

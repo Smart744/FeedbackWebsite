@@ -39,7 +39,7 @@ namespace FeedbackWebsite.Controllers
                     var callbackUrl = Url.Action(
                         "ConfirmEmail",
                         "Account",
-                        new {userId = user.Id, code = code},
+                        new {userId = user.Id, code },
                         protocol: HttpContext.Request.Scheme);
                     EmailService emailService = new EmailService();
                     await emailService.SendEmailAsync(model.Email, "Confirm your account",
@@ -47,10 +47,6 @@ namespace FeedbackWebsite.Controllers
 
                     return Content(
                         "To complete the registration, check the email and click on the link indicated in the letter");
-
-                    //await _userManager.AddToRoleAsync(user, "user");
-                    //await _signInManager.SignInAsync(user, false);
-                    //return RedirectToAction("Index", "Home");
                 }
                 else
                 {
@@ -161,7 +157,7 @@ namespace FeedbackWebsite.Controllers
                 }
 
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var callbackUrl = Url.Action("ResetPassword", "Account", new {userId = user.Id, code = code, userName = user.Email},
+                var callbackUrl = Url.Action("ResetPassword", "Account", new {userId = user.Id, code, userName = user.Email},
                     protocol: HttpContext.Request.Scheme);
                 EmailService emailService = new EmailService();
                 await emailService.SendEmailAsync(model.Email, "Reset Password",
@@ -182,11 +178,12 @@ namespace FeedbackWebsite.Controllers
             }
             else
             {
-                var model = new ViewModels.ResetPasswordViewModel();
-                model.Email = userName;
+                var model = new ResetPasswordViewModel
+                {
+                    Email = userName
+                };
                 return View(model);
             }
-            //return code == null ? View("Error") : View();
         }
 
         [HttpPost]

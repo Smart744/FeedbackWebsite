@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
@@ -31,6 +29,7 @@ namespace FeedbackWebsite.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    await _userManager.AddToRoleAsync(user, "user");
                     return RedirectToAction("Index");
                 }
                 else
@@ -86,19 +85,8 @@ namespace FeedbackWebsite.Controllers
             return View(model);
         }
 
-        //[HttpPost]
-        //public async Task<ActionResult> Delete(string id)
-        //{
-        //    User user = await _userManager.FindByIdAsync(id);
-        //    if (user != null)
-        //    {
-        //        IdentityResult result = await _userManager.DeleteAsync(user);
-        //    }
-        //    return RedirectToAction("Index");
-        //}
-
         // GET: User/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        public ViewResult Delete(string id)
         {
             User user = new User() {Id = id};
             return View(user);
@@ -112,7 +100,7 @@ namespace FeedbackWebsite.Controllers
             User user = await _userManager.FindByIdAsync(id);
             if (user != null)
             {
-                IdentityResult result = await _userManager.DeleteAsync(user);
+                await _userManager.DeleteAsync(user);
             }
             return RedirectToAction("Index");
         }
@@ -136,16 +124,24 @@ namespace FeedbackWebsite.Controllers
                 User user = await _userManager.FindByIdAsync(model.Id);
                 if (user != null)
                 {
-                    var _passwordValidator =
+                    var passwordValidator =
                         HttpContext.RequestServices.GetService(typeof(IPasswordValidator<User>)) as IPasswordValidator<User>;
-                    var _passwordHasher =
+                    var passwordHasher =
                         HttpContext.RequestServices.GetService(typeof(IPasswordHasher<User>)) as IPasswordHasher<User>;
 
-                    IdentityResult result =
-                        await _passwordValidator.ValidateAsync(_userManager, user, model.NewPassword);
+                    IdentityResult result;
+                    if (passwordValidator != null)
+                        result = await passwordValidator.ValidateAsync(_userManager, user, model.NewPassword);
+                    else
+                        return View("Error");
+
                     if (result.Succeeded)
                     {
-                        user.PasswordHash = _passwordHasher.HashPassword(user, model.NewPassword);
+                        if (passwordHasher != null)
+                            user.PasswordHash = passwordHasher.HashPassword(user, model.NewPassword);
+                        else
+                            return View("Error");
+
                         await _userManager.UpdateAsync(user);
                         return RedirectToAction("Index");
                     }

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using FeedbackWebsite.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FeedbackWebsite.Models;
 using FeedbackWebsite.ViewModels;
@@ -23,12 +21,6 @@ namespace FeedbackWebsite.Controllers
         {
             _context = context;
         }
-
-        //// GET: Feedback
-        ////public async Task<IActionResult> Index()
-        ////{
-        ////    return View(new List(new ));
-        ////}
 
         ////// GET: Feedback/Details/5
         [Authorize(Roles = "admin, user")]
@@ -148,66 +140,6 @@ namespace FeedbackWebsite.Controllers
 
             return RedirectToAction("Index", "Feedback");
         }
-
-
-        //// GET: Feedback/Delete/5
-        [Authorize(Roles = "admin, user")]
-        public async Task<IActionResult> Delete(int? eventId)
-        {
-            //if (eventId == null)
-            //{
-            //    return NotFound();
-            //}
-
-            if (eventId == null)
-            {
-                return NotFound();
-            }
-
-            var questionsTextModels = await _context.QuestionTextModel.ToListAsync();
-
-            var answersInfoModel = _context.AnswersInfoModel.Where(model => model.EventId == eventId).ToDictionary(model => model.QuestionId);
-
-            if (answersInfoModel.Count == 0)
-            {
-                return NotFound();
-            }
-
-            List<QuestionsAnswersModel> questionsAnswers = new List<QuestionsAnswersModel>();
-
-            foreach (var question in questionsTextModels)
-            {
-                var questionsAnswersModel = question.IsEnum
-                    ? (QuestionsAnswersModel)CreateQuestionsAnswersEnum(question, answersInfoModel)
-                    : CreateQuestionsAnswersText(question, answersInfoModel);
-
-                questionsAnswers.Add(questionsAnswersModel);
-            }
-
-            IndexViewModel ivm = new IndexViewModel { EventId = eventId.Value, QuestionsAnswers = questionsAnswers };
-
-            return View(ivm);
-
-            //return View();
-        }
-
-        ////// POST: Feedback/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "admin, user")]
-        public async Task<IActionResult> DeleteConfirmed(int eventId)
-        {
-            var answersInfoModels = _context.AnswersInfoModel.Where(model => model.EventId == eventId);
-
-            foreach (var answerInfoModel in answersInfoModels)
-            {
-                _context.AnswersInfoModel.Remove(answerInfoModel);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Feedback");
-        }
-
         private static QuestionsAnswersEnum CreateQuestionsAnswersEnum(QuestionTextModel question, Dictionary<int, AnswersInfoModel> answersInfoModel)
         {
             var questionsAnswersEnum = new QuestionsAnswersEnum
@@ -252,75 +184,47 @@ namespace FeedbackWebsite.Controllers
 
         private async Task AddOrUpdateEnumAnswer(int eventId, Dictionary<int, AnswerEnum> answerEnums, QuestionTextModel question, string answer)
         {
-            try
+            if (!answerEnums.ContainsKey(question.Id))
             {
-                if (!answerEnums.ContainsKey(question.Id))
+                var answerEnum = new AnswerEnum
                 {
-                    var answerEnum = new AnswerEnum
-                    {
-                        QuestionId = question.Id,
-                        EventId = eventId,
-                        QuestionEnumAnswer = Enum.Parse<Answer>(answer)
-                    };
+                    QuestionId = question.Id,
+                    EventId = eventId,
+                    QuestionEnumAnswer = Enum.Parse<Answer>(answer)
+                };
 
-                    _context.Add(answerEnum);
-                    await _context.SaveChangesAsync();
-                }
-                else
-                {
-                    var answerEnum = answerEnums[question.Id];
-                    answerEnum.QuestionEnumAnswer = Enum.Parse<Answer>(answer);
-                    _context.Update(answerEnum);
-                    await _context.SaveChangesAsync();
-                }
+                _context.Add(answerEnum);
+                await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            else
             {
-                //if (!AnswersInfoModelExists(answerEnum.Id))
-                //{
-                //    return NotFound();
-                //}
-                //else
-                //{
-                throw;
-                //}
+                var answerEnum = answerEnums[question.Id];
+                answerEnum.QuestionEnumAnswer = Enum.Parse<Answer>(answer);
+                _context.Update(answerEnum);
+                await _context.SaveChangesAsync();
             }
         }
 
         private async Task AddOrUpdateTextAnswer(int eventId, Dictionary<int, AnswerText> answerTexts, QuestionTextModel question, string answer)
         {
-            try
+            if (!answerTexts.ContainsKey(question.Id))
             {
-                if (!answerTexts.ContainsKey(question.Id))
+                var answerText = new AnswerText
                 {
-                    var answerText = new AnswerText
-                    {
-                        QuestionId = question.Id,
-                        EventId = eventId,
-                        AnswerTextAnswer = answer
-                    };
+                    QuestionId = question.Id,
+                    EventId = eventId,
+                    AnswerTextAnswer = answer
+                };
 
-                    _context.Add(answerText);
-                    await _context.SaveChangesAsync();
-                }
-                else
-                {
-                    var answerText = answerTexts[question.Id];
-                    answerText.AnswerTextAnswer = answer;
-                    _context.Update(answerText);
-                    await _context.SaveChangesAsync();
-                }
+                _context.Add(answerText);
+                await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            else
             {
-                //if (!AnswersInfoModelExists(answerText.Id))
-                //{
-                //    return NotFound();
-                //}
-                //else
-                //{
-                throw;
-                //}
+                var answerText = answerTexts[question.Id];
+                answerText.AnswerTextAnswer = answer;
+                _context.Update(answerText);
+                await _context.SaveChangesAsync();
             }
         }
     }

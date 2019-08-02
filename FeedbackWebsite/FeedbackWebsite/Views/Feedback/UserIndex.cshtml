@@ -9,39 +9,39 @@
 }
 
 
-<h1>Index</h1>
+<h1>Event Feedback</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="btn btn-success" asp-action="Create" role="button">Create New</a>
 </p>
 <table class="table">
     <thead>
     <tr>
-        <th>
+        <th class="text-center">
             @Html.DisplayNameFor(model => model.EmployeeName)
         </th>
-        <th>
+        <th class="text-center">
             @Html.DisplayNameFor(model => model.Department)
         </th>
-        <th>
+        <th class="text-center">
             @Html.DisplayNameFor(model => model.Position)
         </th>
-        <th>
+        <th class="text-center">
             @Html.DisplayNameFor(_ => headerEvent.EventName)
         </th>
-        <th>
+        <th class="text-center">
             @Html.DisplayNameFor(_ => headerEvent.EventOrg)
         </th>
-        <th>
+        <th class="text-center">
             @Html.DisplayNameFor(_ =>headerEvent.PresentersName)
         </th>
-        <th>
+        <th class="text-center">
             @Html.DisplayNameFor(_ => headerEvent.EventLocation)
         </th>
-        <th>
+        <th class="text-center">
             @Html.DisplayNameFor(_ => headerEvent.EventStartDate)
         </th>
-        <th>
+        <th class="text-center">
             @Html.DisplayNameFor(_ => headerEvent.EventEndDate)
         </th>
         <th></th>

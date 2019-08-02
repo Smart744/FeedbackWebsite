@@ -21,6 +21,7 @@
             <div class="col-6 col-md-4">Question</div>
             <div class="col-12 col-md-8">@Html.DisplayFor(model => qText.QuestionText)</div>
             <div class="w-100"></div>
+            <br/>
             <div class="col-6 col-md-4">Answer</div>
             <div class="col-12 col-md-8">@qText.GetAnswer()</div>
 
@@ -33,9 +34,6 @@
 
 </div>
 <div>
-    <a asp-action="AddOrEdit" asp-route-eventId="@Model.EventId">
-        <button type="button" class="btn btn-info">Edit</button>
-    </a>
-    @*<a asp-action="AddOrEdit" asp-route-id="@Model.EventId"></a>*@ |
-    <a asp-controller="Feedback" asp-action="Index">Back to List</a>
+    <a class="btn btn-info" asp-action="AddOrEdit" asp-route-eventId="@Model.EventId" role="button">Edit</a> |
+    <a class="btn btn-secondary" asp-controller="Feedback" asp-action="Index" role="button">Back to List</a>
 </div>

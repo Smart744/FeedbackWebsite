@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using FeedbackWebsite.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace FeedbackWebsite.Controllers
 {
@@ -20,13 +15,7 @@ namespace FeedbackWebsite.Controllers
                 return RedirectToAction("AdminIndex");
             }
 
-            return RedirectToAction("UserIndex");
-        }
-
-        [Authorize(Roles = "user")]
-        public IActionResult UserIndex()
-        {
-            return View();
+            return RedirectToAction("Index", "Feedback");
         }
 
         [Authorize(Roles = "admin")]

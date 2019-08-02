@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Reflection;
 
 namespace FeedbackWebsite.Utils
@@ -18,7 +15,6 @@ namespace FeedbackWebsite.Utils
 
             var displayName = DisplayNameCache.GetOrAdd(key, x =>
             {
-                //var name = (DisplayNameAttribute[]) value
                 var name = (DisplayAttribute[])value
                     .GetType()
                     .GetTypeInfo()

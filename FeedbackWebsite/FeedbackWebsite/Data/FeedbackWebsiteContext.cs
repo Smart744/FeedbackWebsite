@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FeedbackWebsite.Data
 {
-    public class FeedbackWebsiteContext : DbContext
+    public sealed class FeedbackWebsiteContext : DbContext
     {
         public FeedbackWebsiteContext (DbContextOptions<FeedbackWebsiteContext> options)
             : base(options)
