@@ -13,6 +13,7 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace FeedbackWebsite.Controllers
 {
@@ -358,10 +359,18 @@ namespace FeedbackWebsite.Controllers
                 EventEndDate = eventInfo.EventEndDate
             };
 
-            string fileName = "Event Feedback Form.xlsx";
-            string sourcePath = @"C:\Users\Арсений\source\repos\FeedbackService\FeedbackWebsite\FeedbackWebsite\Excel\Source";
+            //string fileName = "Event Feedback Form.xlsx";
+            //string sourcePath = @"D:\Core\FeedbackService\FeedbackWebsite\FeedbackWebsite\Excel\Source"; 
 
-            string soutceFile = Path.Combine(sourcePath, fileName);
+            string fileName = @"Excel\Source\Event Feedback Form.xlsx";
+
+            var exePath = Path.GetDirectoryName(System.Reflection
+                .Assembly.GetExecutingAssembly().CodeBase);
+            Regex appPathMatcher = new Regex(@"(?<!fil)[A-Za-z]:\\+[\S\s]*?(?=\\+bin)");
+            var appRoot = appPathMatcher.Match(exePath).Value;
+
+            //string soutceFile = Path.Combine(sourcePath, fileName);
+            string soutceFile = Path.Combine(appRoot, fileName);
 
             MemoryStream ms;
             using (var fs = new FileStream(soutceFile, FileMode.Open, FileAccess.Read))
