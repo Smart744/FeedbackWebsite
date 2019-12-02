@@ -45,8 +45,9 @@ namespace FeedbackWebsite.Controllers
                     await emailService.SendEmailAsync(model.Email, "Confirm your account",
                         $"Confirm the registration by clicking on the link: <a href='{callbackUrl}'>link</a>");
 
-                    return Content(
-                        "To complete the registration, check the email and click on the link indicated in the letter");
+                    return View("ConfirmEmail");
+                    //return Content(
+                    //    "To complete the registration, check the email and click on the link indicated in the letter");
                 }
                 else
                 {
@@ -79,8 +80,9 @@ namespace FeedbackWebsite.Controllers
             if (result.Succeeded)
             {
                 await _userManager.AddToRoleAsync(user, "user");
-                await _signInManager.SignInAsync(user, false);
-                return RedirectToAction("Index", "Home");
+                //await _signInManager.SignInAsync(user, false);
+                //return RedirectToAction("Index", "Home");
+                return View("RegisterConfirmation");
             }
             else
                 return View("Error");
@@ -151,9 +153,13 @@ namespace FeedbackWebsite.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByNameAsync(model.Email);
-                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+                if (user == null)
                 {
                     return View("NotExistingEmail");
+                }
+                else if (!(await _userManager.IsEmailConfirmedAsync(user)))
+                {
+                    return View("NotConfirmedEmail");
                 }
 
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);

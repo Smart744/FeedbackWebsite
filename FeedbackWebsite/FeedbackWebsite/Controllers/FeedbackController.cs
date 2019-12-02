@@ -52,7 +52,6 @@ namespace FeedbackWebsite.Controllers
             }
             var userEvents = _context.UserEventModels.Where(model => model.UserId == user.Id);
 
-
             List<EventInfoModel> eventInfoModels = new List<EventInfoModel>();
 
             foreach (var userEvent in userEvents)

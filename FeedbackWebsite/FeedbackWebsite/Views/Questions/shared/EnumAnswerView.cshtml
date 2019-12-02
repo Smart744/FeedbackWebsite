@@ -9,8 +9,7 @@
         @*<div class="input-control select size3">*@
         <div>
             @*<select class="selectpicker" title="Choose one of the following..." asp-for="@Model.EnumAnswer" name="answers[@Model.QuestionId]" asp-items="Html.GetEnumSelectList<Answer>()">*@
-            <select class="custom-select" asp-for="@Model.EnumAnswer" name="answers[@Model.QuestionId]" asp-items="Html.GetEnumSelectList<Answer>()">
-            </select>
+            <select class="custom-select" asp-for="@Model.EnumAnswer" name="answers[@Model.QuestionId]" asp-items="Html.GetEnumSelectList<Answer>()"></select>
         </div>
         <input type="hidden" asp-for="@Model.QuestionType" name="questionType" value="@Model.QuestionType" />
         <input type="hidden" asp-for="@Model.QuestionId" name="questionId" value="@Model.QuestionId" />

@@ -8,8 +8,9 @@
     var headerEvent = new EventInfoModel();
 }
 
-
-<h1>Event Feedback</h1>
+<p>
+    <h1>Event Feedback</h1>
+</p>
 
 <p>
     <a class="btn btn-success" asp-action="Create" role="button">Create New</a>
@@ -77,11 +78,22 @@
             <td>
                 @Html.DisplayFor(modelItem => item.EventEndDate)
             </td>
-            <td>
+            @*<td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
                 <a asp-controller="Questions" asp-action="Details" asp-route-eventId= "@item.Id" >See questions info</a> 
+            </td>*@
+            <td>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                        <a class="dropdown-item" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                        <a class="dropdown-item" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        <a class="dropdown-item" asp-controller="Questions" asp-action="Details" asp-route-eventId="@item.Id">See questions info</a>
+                    </div>
+                </div>
             </td>
         </tr>
 }
